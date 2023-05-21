@@ -35,10 +35,10 @@
   ];
 
   // 创建场景
-  var scene = new THREE.Scene();
+  const scene = new THREE.Scene();
 
   // 创建相机
-  var camera = new THREE.PerspectiveCamera(
+  const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
     0.1,
@@ -50,12 +50,12 @@
   camera.lookAt(0, 0, 0);
 
   // 创建渲染器
-  var renderer = new THREE.WebGLRenderer({ debug: true });
+  const renderer = new THREE.WebGLRenderer({ debug: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
   // 创建光源
-  var light = new THREE.PointLight(0xffffff, 1);
+  const light = new THREE.PointLight(0xffffff, 1);
   light.position.set(0, 0, 5);
   scene.add(light);
 
@@ -64,10 +64,10 @@
   scene.add(axesHelper);
 
   // 创建球体几何体
-  var radius = 2;
-  var segments = 64;
-  var rings = 64;
-  var geometry = new THREE.SphereGeometry(radius, segments, rings);
+  const radius = 2;
+  const segments = 64;
+  const rings = 64;
+  const geometry = new THREE.SphereGeometry(radius, segments, rings);
 
   const widthSegments = 32; // 横向细分段数
   const heightSegments = 32; // 纵向细分段数
@@ -89,23 +89,23 @@
   }
 
   // 创建球体材质
-  var material = new THREE.MeshBasicMaterial({
+  const material = new THREE.MeshBasicMaterial({
     color: 0x00ff00, // 球体的颜色
     transparent: true, // 开启透明
     opacity: 0, // 设置透明度
   });
 
   // 创建球体网格
-  var sphere = new THREE.Mesh(geometry, material);
+  const sphere = new THREE.Mesh(geometry, material);
 
   // 将球体添加到场景
   scene.add(sphere);
 
   // 加载字体
-  var fontLoader = new FontLoader();
-  var font;
+  const fontLoader = new FontLoader();
+  let font;
 
-  let totalCount = positions.length;
+  const totalCount = positions.length;
 
   fontLoader.load("../lib/fonts/FZKai-Z03S_Regular.json", function (response) {
     font = response;
@@ -124,12 +124,12 @@
     }
   });
 
-  let savePos = [];
-  var textMeshes = []; // 存储文本网格的数组
+  const savePos = [];
+  const textMeshes = []; // 存储文本网格的数组
 
   function createTextMeshes(text, pos) {
     // 遍历文本数组
-    var textGeometry = new TextGeometry(text, {
+    const textGeometry = new TextGeometry(text, {
       font: font,
       size: 0.1 /* 字体大小 */,
       height: 0.001 /* 文本厚度 */,
@@ -146,19 +146,19 @@
     textGeometry.computeBoundingBox();
 
     // 根据文本几何体计算布局位置
-    var textWidth =
+    const textWidth =
       textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
-    var textHeight =
+    const textHeight =
       textGeometry.boundingBox.max.y - textGeometry.boundingBox.min.y;
-    var textCenterX = -textWidth / 2;
-    var textCenterY = -textHeight / 2;
+    const textCenterX = -textWidth / 2;
+    const textCenterY = -textHeight / 2;
 
     // 平移到球体表面
     textGeometry.translate(textCenterX, textCenterY, 0);
 
     // 创建文本网格
-    var textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // 使用基础材质
-    var textMesh = new THREE.Mesh(textGeometry, textMaterial);
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // 使用基础材质
+    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
 
     // 获取球体表面的法线向量
     const normal = new THREE.Vector3(pos.x, pos.y, pos.z).normalize();

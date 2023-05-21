@@ -53,10 +53,10 @@
 
   let curves;
 
-  init();
-  animate();
-
-  function init() {
+  /**
+   * 初始化场景
+   */
+  const init = () => {
     scene = new THREE.Scene();
 
     // 创建一个三维坐标轴
@@ -202,7 +202,7 @@
     document.body.appendChild(stats.dom);
 
     window.addEventListener("resize", onWindowResize);
-  }
+  };
 
   function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -242,4 +242,7 @@
 
     stats.update();
   }
+
+  init();
+  animate();
 </script>
