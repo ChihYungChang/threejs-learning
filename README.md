@@ -8,3 +8,6 @@
 
 ## [3. 管道环绕流光特效](./PipelineStreamingSurroundingEffect/README.md)
 ![预览](./PipelineStreamingSurroundingEffect/preview.png)
+
+## [4. 粒子螺旋上升动画](./ParticleSpiralRiseAnimation/README.md)
+![预览](./ParticleSpiralRiseAnimation/preview.png)
