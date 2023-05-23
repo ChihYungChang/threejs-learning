@@ -115,7 +115,6 @@ const createTextGeometry = (font, text, config) => {
     font: font,
     ...def,
   });
-  geometry.rotateX(Math.PI);
 
   return geometry;
 };

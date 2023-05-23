@@ -1,12 +1,6 @@
 import * as THREE from "three";
-
-import TWEEN from "three/addons/libs/tween.module.js";
-import { TrackballControls } from "three/addons/controls/TrackballControls.js";
-import {
-  CSS3DRenderer,
-  CSS3DObject,
-} from "three/addons/renderers/CSS3DRenderer.js";
-
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { random } from "three/addons/utils/CommonUtils.js";
 
 const TEXT = [
@@ -30,43 +24,100 @@ const TEXT = [
 
 let camera, scene, renderer;
 
+const fontSize = 2;
+const maxCameraDistance = 100;
+
 const objects = [];
 
-init();
-animate();
+/**
+ * 初始化文字
+ */
+const loadFont = () => {
+  const loader = new FontLoader();
+  return new Promise((resolve, reject) => {
+    loader.load("../lib/fonts/Slideqiuhong_Regular.json", function (font) {
+      resolve(font);
+    });
+  });
+};
 
-function init() {
+/**
+ * 创建几何文字
+ */
+const createTextGeometry = (font, text, config) => {
+  const def = {
+    size: 1,
+    height: 0.5,
+    curveSegments: 3,
+    bevelEnabled: true,
+    bevelThickness: 0.02,
+    bevelSize: 0.01,
+    bevelOffset: 0,
+    bevelSegments: 5,
+  };
+  if (config) {
+    Object.assign(def, config);
+  }
+  const geometry = new TextGeometry(text, {
+    font: font,
+    ...def,
+  });
+
+  return geometry;
+};
+
+async function init() {
   camera = new THREE.PerspectiveCamera(
     40,
     window.innerWidth / window.innerHeight,
     1,
     10000
   );
-  camera.position.z = 6000;
+  camera.position.x = 0;
+  camera.position.y = 0;
+  camera.position.z = maxCameraDistance;
 
   scene = new THREE.Scene();
 
+  // 创建一个三维坐标轴
+  const axesHelper = new THREE.AxesHelper(150);
+  scene.add(axesHelper);
+
+  const font = await loadFont();
+
+  const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // 使用基础材质
+  // 加载贴图
+  var textureLoader = new THREE.TextureLoader();
+  var texture = textureLoader.load("./texture.png");
+
+  // 应用贴图到文字材质
+  textMaterial.map = texture;
+
   for (let i = 0; i < TEXT.length; i += 1) {
-    const element = document.createElement("div");
-    element.className = "element";
+    const strArr = TEXT[i].split("");
+    const obj = new THREE.Object3D();
+    let y = random(-50, 50);
+    let x = random(-50, 50);
+    for (let j = 0; j < strArr.length; j++) {
+      const textGeo = createTextGeometry(font, strArr[j], { size: fontSize });
 
-    const symbol = document.createElement("div");
-    symbol.className = "symbol";
-    symbol.textContent = TEXT[i];
-    element.appendChild(symbol);
+      // 创建文本网格
+      const textMesh = new THREE.Mesh(textGeo, textMaterial);
+      textMesh.position.x = x;
+      textMesh.position.y = y;
+      textMesh.position.z = 0;
 
-    const objectCSS = new CSS3DObject(element);
-    objectCSS.position.x = random(-1000, 1000);
-    objectCSS.position.y = random(-500, 500);
-    objectCSS.position.z = random(-5000, -1000);
-
-    objects.push(objectCSS);
-    scene.add(objectCSS);
+      y += fontSize + 0.5;
+      obj.add(textMesh);
+      objects.push(obj);
+    }
+    scene.add(obj);
   }
 
-  renderer = new CSS3DRenderer();
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  document.getElementById("container").appendChild(renderer.domElement);
+  document.body.appendChild(renderer.domElement);
 
   window.addEventListener("resize", onWindowResize);
 }
@@ -81,15 +132,20 @@ function animate() {
   requestAnimationFrame(animate);
 
   for (let obj of objects) {
-    obj.position.z += 10;
+    obj.position.z += 0.1;
 
-    if (obj.position.z > 6000) {
-      obj.position.z = random(-5000, -1000);
+    if (obj.position.z > maxCameraDistance) {
+      obj.position.z = random(-200, 0);
     }
   }
   render();
 }
 
 function render() {
-  renderer.render(scene, camera);
+  if (renderer) {
+    renderer.render(scene, camera);
+  }
 }
+
+init();
+animate();
