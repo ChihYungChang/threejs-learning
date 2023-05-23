@@ -46,6 +46,9 @@ const init = async () => {
   camera.position.set(2, 2, 4);
   camera.lookAt(scene.position);
 
+  // 创建平板
+  createHidePlane();
+
   // 初始化曲线列表
   const pointList = initCurvesPoint(TEXT.length);
   const curves = await initCatmullRomCurve3List(pointList);
@@ -94,6 +97,14 @@ const loadFont = () => {
   });
 };
 
+const createHidePlane = () => {
+  const geometry = new THREE.PlaneGeometry(10, 10);
+  const hiderMaterial = new THREE.MeshStandardMaterial();
+  hiderMaterial.colorWrite = false;
+  const plane = new THREE.Mesh(geometry, hiderMaterial);
+  scene.add(plane);
+};
+
 /**
  * 创建几何文字
  */
@@ -115,6 +126,8 @@ const createTextGeometry = (font, text, config) => {
     font: font,
     ...def,
   });
+
+  geometry.rotateX(Math.PI);
 
   return geometry;
 };
@@ -226,6 +239,20 @@ function animate() {
     flow.updateCurve(0, curve);
     flow.moveAlongCurve(0.0009);
   }
+
+  const applyHiderMaterial = (mesh) => {
+    if (!mesh) {
+      return;
+    }
+    if (mesh.material) {
+      mesh.material = hiderMaterial;
+    }
+    mesh.traverse((node) => {
+      if (node.isMesh) {
+        node.material = hiderMaterial;
+      }
+    });
+  };
 
   render();
 }
