@@ -50,7 +50,7 @@ loader.load("../../lib/model/glb/text-wrapping.glb", function (gltf) {
   scene.add(model);
 
   mixer = new THREE.AnimationMixer(model);
-  mixer.clipAction(gltf.animations[1]).play();
+  mixer.clipAction(gltf.animations[0]).play();
 });
 
 var clock = new THREE.Clock();
@@ -58,8 +58,7 @@ function render() {
   requestAnimationFrame(render);
   var delta = clock.getDelta();
   if (mixer != null) mixer.update(delta);
-  if (model) model.rotation.y += 0.025;
-
+ 
   renderer.render(scene, camera);
 }
 
