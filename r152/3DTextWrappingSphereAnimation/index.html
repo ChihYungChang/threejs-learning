@@ -107,22 +107,25 @@
 
   const totalCount = positions.length;
 
-  fontLoader.load("../lib/fonts/FZKai-Z03S_Regular.json", function (response) {
-    font = response;
+  fontLoader.load(
+    "../../lib/fonts/Alibaba PuHuiTi 2.0 115 Black_Regular.json",
+    function (response) {
+      font = response;
 
-    // 创建并布局文本网格
-    for (let i = 0; i < totalCount; i += 3) {
-      const x = positions[i];
-      const y = positions[i + 1];
-      const z = positions[i + 2];
+      // 创建并布局文本网格
+      for (let i = 0; i < totalCount; i += 3) {
+        const x = positions[i];
+        const y = positions[i + 1];
+        const z = positions[i + 2];
 
-      createTextMeshes(TEXT[parseInt((TEXT.length - 1) * Math.random())], {
-        x,
-        y,
-        z,
-      });
+        createTextMeshes(TEXT[parseInt((TEXT.length - 1) * Math.random())], {
+          x,
+          y,
+          z,
+        });
+      }
     }
-  });
+  );
 
   const savePos = [];
   const textMeshes = []; // 存储文本网格的数组

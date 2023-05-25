@@ -88,7 +88,7 @@ const init = async () => {
 const loadFont = () => {
   const loader = new FontLoader();
   return new Promise((resolve, reject) => {
-    loader.load("../lib/fonts/FZKai-Z03S_Regular.json", function (font) {
+    loader.load("../../lib/fonts/FZKai-Z03S_Regular.json", function (font) {
       resolve(font);
     });
   });

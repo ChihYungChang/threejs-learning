@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { random } from "three/addons/utils/CommonUtils.js";
-
+ 
 const TEXT = [
   "仁为万善之本",
   "严以律己，宽以待人",
@@ -35,7 +35,7 @@ const objects = [];
 const loadFont = () => {
   const loader = new FontLoader();
   return new Promise((resolve, reject) => {
-    loader.load("../lib/fonts/Slideqiuhong_Regular.json", function (font) {
+    loader.load("../../lib/fonts/Slideqiuhong_Regular.json", function (font) {
       resolve(font);
     });
   });

@@ -33,7 +33,7 @@ const objects = [];
 const loadFont = () => {
   const loader = new THREE.FontLoader();
   return new Promise((resolve, reject) => {
-    loader.load("../lib/fonts/Slideqiuhong_Regular.json", function (font) {
+    loader.load("../../lib/fonts/Slideqiuhong_Regular.json", function (font) {
       resolve(font);
     });
   });
