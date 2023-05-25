@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { random } from "three/addons/utils/CommonUtils.js";
 
 const preload = () => {
   let manager = new THREE.LoadingManager();
@@ -44,12 +45,11 @@ class Environment {
 
   setup() {
     this.createParticles = new CreateParticles(
-      this.scene,
+      { scene: this.scene, camera: this.camera, renderer: this.renderer },
       this.font,
-      this.particle,
-      this.camera,
-      this.renderer
+      this.particle
     );
+    this.createParticles.createText("123456你好啊!");
   }
 
   render() {
@@ -96,171 +96,188 @@ class Environment {
 }
 
 class CreateParticles {
-  constructor(scene, font, particleImg, camera, renderer) {
+  constructor({ scene, camera, renderer }, font, particleImg) {
     this.scene = scene;
     this.font = font;
     this.particleImg = particleImg;
     this.camera = camera;
     this.renderer = renderer;
-
-    this.raycaster = new THREE.Raycaster();
-    this.mouse = new THREE.Vector2(-200, 200);
-
     this.colorChange = new THREE.Color();
 
-    this.buttom = false;
-
     this.data = {
-      text: `1
-2
-3
-4
-5,
-你
-好`,
-      amount: 500,
+      text: `1`,
+      amount: 200,
       particleSize: 1,
       particleColor: 0xffffff,
-      textSize: 6,
-      area: 250,
+      textSize: 5,
+      area: 1,
       ease: 0.05,
     };
 
-    this.setup();
+    this.particleGeoList = [];
+
+    this.rate = 1000;
+
     this.bindEvents();
   }
 
-  setup() {
-    const geometry = new THREE.PlaneGeometry(
-      this.visibleWidthAtZDepth(100, this.camera),
-      this.visibleHeightAtZDepth(100, this.camera)
-    );
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
-      transparent: true,
-    });
-    this.planeArea = new THREE.Mesh(geometry, material);
-    this.planeArea.visible = false;
-    this.createText();
-  }
+  setup() {}
 
   bindEvents() {
-    document.addEventListener("mousedown", this.onMouseDown.bind(this));
-    document.addEventListener("mousemove", this.onMouseMove.bind(this));
-    document.addEventListener("mouseup", this.onMouseUp.bind(this));
-  }
-
-  onMouseDown() {
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    const vector = new THREE.Vector3(this.mouse.x, this.mouse.y, 0.5);
-    vector.unproject(this.camera);
-    const dir = vector.sub(this.camera.position).normalize();
-    const distance = -this.camera.position.z / dir.z;
-    this.currenPosition = this.camera.position
-      .clone()
-      .add(dir.multiplyScalar(distance));
-
-    const pos = this.particles.geometry.attributes.position;
-    this.buttom = true;
-    this.data.ease = 0.01;
-  }
-
-  onMouseUp() {
-    this.buttom = false;
-    this.data.ease = 0.05;
-  }
-
-  onMouseMove() {
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    window.addEventListener("click", () => {
+      this.rate = this.rate == 100 ? 0 : 100;
+    });
   }
 
   render(level) {
     const time = ((0.001 * performance.now()) % 12) / 12;
     const zigzagTime = (1 + Math.sin(time * 2 * Math.PI)) / 6;
 
-    this.raycaster.setFromCamera(this.mouse, this.camera);
+    if (this.particleGeoList) {
+      for (const { particles, geometryCopy } of this.particleGeoList) {
+        const pos = particles.geometry.attributes.position;
+        const copy = geometryCopy.attributes.position;
+        const coulors = particles.geometry.attributes.customColor;
+        const randomPosition = particles.geometry.attributes.randomPosition;
+        const size = particles.geometry.attributes.size;
 
-    const pos = this.particles.geometry.attributes.position;
-    const copy = this.geometryCopy.attributes.position;
-    const coulors = this.particles.geometry.attributes.customColor;
-    const size = this.particles.geometry.attributes.size;
+        for (var i = 0, l = pos.count; i < l; i++) {
+          // 初始位置
+          const initX = copy.getX(i);
+          const initY = copy.getY(i);
+          const initZ = copy.getZ(i);
 
-    for (var i = 0, l = pos.count; i < l; i++) {
-      // 初始位置
-      const initX = copy.getX(i);
-      const initY = copy.getY(i);
-      const initZ = copy.getZ(i);
+          // 当前例子位置
+          let px = pos.getX(i);
+          let py = pos.getY(i);
+          let pz = pos.getZ(i);
 
-      // 当前例子位置
-      let px = pos.getX(i) + Math.random() * 2;
-      let py = pos.getY(i);
-      let pz = pos.getZ(i);
+          this.colorChange.setHSL(0.5, 1, 1);
+          coulors.setXYZ(
+            i,
+            this.colorChange.r,
+            this.colorChange.g,
+            this.colorChange.b
+          );
+          coulors.needsUpdate = true;
 
-      pos.setXYZ(i, px, py, pz);
-      pos.needsUpdate = true;
-    }
-  }
+          this.colorChange.setHSL(0.5, 1, 1);
+          coulors.setXYZ(
+            i,
+            this.colorChange.r,
+            this.colorChange.g,
+            this.colorChange.b
+          );
+          coulors.needsUpdate = true;
 
-  createText() {
-    let thePoints = [];
+          size.array[i] = this.data.particleSize;
+          size.needsUpdate = true;
 
-    let shapes = this.font.generateShapes(this.data.text, this.data.textSize);
-    let geometry = new THREE.ShapeGeometry(shapes);
-    geometry.computeBoundingBox();
+          // 更新位置逻辑
 
-    const xMid =
-      -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
-    const yMid = (geometry.boundingBox.max.y - geometry.boundingBox.min.y) / 2;
+          const initVec = new THREE.Vector3(initX, initY, 0);
+          const posVec = new THREE.Vector3(
+            px + random(-this.rate, this.rate),
+            py + random(-this.rate, this.rate),
+            0
+          );
+          const d = new THREE.Vector3(0, 0, 0).subVectors(initVec, posVec);
 
-    geometry.center();
+          // px += (initX - px) * this.data.ease;
+          // py += (initY - py) * this.data.ease;
+          // pz += (initZ - pz) * this.data.ease;
+          px += d.x * this.data.ease;
+          py += d.y * this.data.ease;
+          pz += d.z * this.data.ease;
 
-    let holeShapes = [];
-
-    for (let q = 0; q < shapes.length; q++) {
-      let shape = shapes[q];
-
-      if (shape.holes && shape.holes.length > 0) {
-        for (let j = 0; j < shape.holes.length; j++) {
-          let hole = shape.holes[j];
-          holeShapes.push(hole);
+          pos.setXYZ(i, px, py, pz);
+          pos.needsUpdate = true;
         }
       }
     }
-    shapes.push.apply(shapes, holeShapes);
+  }
 
-    let colors = [];
-    let sizes = [];
+  createText(text) {
+    const textArr = text.replace(/ /gi, "").split("");
 
-    for (let x = 0; x < shapes.length; x++) {
-      let shape = shapes[x];
+    const dataList = [];
 
-      const amountPoints =
-        shape.type == "Path" ? this.data.amount / 2 : this.data.amount;
-
-      let points = shape.getSpacedPoints(amountPoints);
-
-      points.forEach((element, z) => {
-        const a = new THREE.Vector3(element.x, element.y, 0);
-        thePoints.push(a);
-        colors.push(this.colorChange.r, this.colorChange.g, this.colorChange.b);
-        sizes.push(1);
-      });
+    let yOffset = 0;
+    for (let text of textArr) {
+      let shapes = this.font.generateShapes(text, this.data.textSize);
+      let geometry = new THREE.ShapeGeometry(shapes);
+      geometry.center();
+      geometry.computeBoundingBox();
+      const textHeight =
+        (geometry.boundingBox.max.y - geometry.boundingBox.min.y) / 2.85;
+      dataList.push({ geometry, shapes, textHeight });
+      yOffset += textHeight;
     }
 
-    let geoParticles = new THREE.BufferGeometry().setFromPoints(thePoints);
-    geoParticles.translate(xMid, yMid, 0);
+    const allGeoParticles = [];
+    let y = yOffset / 2;
+    for (const { geometry, shapes, textHeight } of dataList) {
+      let thePoints = [];
+      const randomPoints = [];
+      geometry.computeBoundingBox();
+      let holeShapes = [];
 
-    geoParticles.setAttribute(
-      "customColor",
-      new THREE.Float32BufferAttribute(colors, 3)
-    );
-    geoParticles.setAttribute(
-      "size",
-      new THREE.Float32BufferAttribute(sizes, 1)
-    );
+      for (let q = 0; q < shapes.length; q++) {
+        let shape = shapes[q];
+
+        if (shape.holes && shape.holes.length > 0) {
+          for (let j = 0; j < shape.holes.length; j++) {
+            let hole = shape.holes[j];
+            holeShapes.push(hole);
+          }
+        }
+      }
+      shapes.push.apply(shapes, holeShapes);
+
+      let colors = [];
+      let sizes = [];
+
+      for (let x = 0; x < shapes.length; x++) {
+        let shape = shapes[x];
+
+        const amountPoints =
+          shape.type == "Path" ? this.data.amount / 2 : this.data.amount;
+
+        let points = shape.getSpacedPoints(amountPoints);
+
+        points.forEach((element, z) => {
+          const a = new THREE.Vector3(element.x, element.y, 0);
+          thePoints.push(a);
+          randomPoints.push(element.x, element.y, 0);
+          colors.push(
+            this.colorChange.r,
+            this.colorChange.g,
+            this.colorChange.b
+          );
+          sizes.push(1);
+        });
+      }
+
+      let geoParticles = new THREE.BufferGeometry().setFromPoints(thePoints);
+      geoParticles.translate(0, y, 0);
+
+      y -= this.data.textSize + textHeight;
+
+      geoParticles.setAttribute(
+        "customColor",
+        new THREE.Float32BufferAttribute(colors, 3)
+      );
+      geoParticles.setAttribute(
+        "randomPosition",
+        new THREE.Float32BufferAttribute(randomPoints, 3)
+      );
+      geoParticles.setAttribute(
+        "size",
+        new THREE.Float32BufferAttribute(sizes, 1)
+      );
+
+      allGeoParticles.push(geoParticles);
+    }
 
     const material = new THREE.ShaderMaterial({
       uniforms: {
@@ -275,26 +292,18 @@ class CreateParticles {
       transparent: true,
     });
 
-    this.particles = new THREE.Points(geoParticles, material);
-    this.scene.add(this.particles);
+    for (const geo of allGeoParticles) {
+      const particles = new THREE.Points(geo, material);
+      this.scene.add(particles);
 
-    this.geometryCopy = new THREE.BufferGeometry();
-    this.geometryCopy.copy(this.particles.geometry);
-  }
+      const geometryCopy = new THREE.BufferGeometry();
+      geometryCopy.copy(particles.geometry);
 
-  visibleHeightAtZDepth(depth, camera) {
-    const cameraOffset = camera.position.z;
-    if (depth < cameraOffset) depth -= cameraOffset;
-    else depth += cameraOffset;
-
-    const vFOV = (camera.fov * Math.PI) / 180;
-
-    return 2 * Math.tan(vFOV / 2) * Math.abs(depth);
-  }
-
-  visibleWidthAtZDepth(depth, camera) {
-    const height = this.visibleHeightAtZDepth(depth, camera);
-    return height * camera.aspect;
+      this.particleGeoList.push({
+        particles,
+        geometryCopy,
+      });
+    }
   }
 
   distance(x1, y1, x2, y2) {
