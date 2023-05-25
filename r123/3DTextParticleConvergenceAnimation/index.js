@@ -125,7 +125,7 @@ class CreateParticles {
 
   bindEvents() {
     window.addEventListener("click", () => {
-      this.rate = this.rate == 100 ? 0 : 100;
+      this.rate = this.rate == 1000 ? 0 : 1000;
     });
   }
 
@@ -146,6 +146,10 @@ class CreateParticles {
           const initX = copy.getX(i);
           const initY = copy.getY(i);
           const initZ = copy.getZ(i);
+          // 随机位置
+          const randomX = randomPosition.getX(i);
+          const randomY = randomPosition.getY(i);
+          const randomZ = randomPosition.getZ(i);
 
           // 当前例子位置
           let px = pos.getX(i);
@@ -175,12 +179,12 @@ class CreateParticles {
 
           // 更新位置逻辑
 
-          const initVec = new THREE.Vector3(initX, initY, 0);
-          const posVec = new THREE.Vector3(
-            px + random(-this.rate, this.rate),
-            py + random(-this.rate, this.rate),
-            0
-          );
+          const initVec = new THREE.Vector3(initX, initY, initZ);
+          const posVec = new THREE.Vector3(px, py, pz);
+          const randomVec = new THREE.Vector3(randomX, randomY, randomZ);
+          if (this.rate === 1000) {
+            posVec.add(randomVec);
+          }
           const d = new THREE.Vector3(0, 0, 0).subVectors(initVec, posVec);
 
           // px += (initX - px) * this.data.ease;
@@ -248,7 +252,11 @@ class CreateParticles {
         points.forEach((element, z) => {
           const a = new THREE.Vector3(element.x, element.y, 0);
           thePoints.push(a);
-          randomPoints.push(element.x, element.y, 0);
+          randomPoints.push(
+            random(-100, 100),
+            random(-100, 100),
+            random(-2000, 100)
+          );
           colors.push(
             this.colorChange.r,
             this.colorChange.g,
