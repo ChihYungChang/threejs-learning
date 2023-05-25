@@ -17,3 +17,7 @@
 
 ## [6. 物体遮挡](./r152/OcclusiveObjectEffect/README.md)
 ![预览](./r152/OcclusiveObjectEffect/preview.png)
+
+
+## [7. 播放GLB模型动画](./r123/GlbAnimation/README.md)
+![预览](./r123/GlbAnimation/preview.png)
