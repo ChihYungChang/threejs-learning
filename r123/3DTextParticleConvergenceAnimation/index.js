@@ -49,7 +49,7 @@ class Environment {
       this.font,
       this.particle
     );
-    this.createParticles.createText("123456你好啊!");
+    this.createParticles.createText("你好啊");
   }
 
   render() {
@@ -109,7 +109,7 @@ class CreateParticles {
       amount: 200,
       particleSize: 1,
       particleColor: 0xffffff,
-      textSize: 5,
+      textSize: 10,
       area: 1,
       ease: 0.05,
     };
@@ -117,6 +117,8 @@ class CreateParticles {
     this.particleGeoList = [];
 
     this.rate = 1000;
+
+    this.textMeshList = [];
 
     this.bindEvents();
   }
@@ -201,26 +203,46 @@ class CreateParticles {
     }
   }
 
-  createText(text) {
+  /**
+   * 初始化文字，获取文字数据
+   * @param {*} text
+   * @returns
+   */
+  initText(text) {
     const textArr = text.replace(/ /gi, "").split("");
 
-    const dataList = [];
-
+    const generateParticleData = [];
     let yOffset = 0;
     for (let text of textArr) {
       let shapes = this.font.generateShapes(text, this.data.textSize);
       let geometry = new THREE.ShapeGeometry(shapes);
       geometry.center();
       geometry.computeBoundingBox();
-      const textHeight =
-        (geometry.boundingBox.max.y - geometry.boundingBox.min.y) / 2.85;
-      dataList.push({ geometry, shapes, textHeight });
-      yOffset += textHeight;
+      const textHeight = geometry.boundingBox.max.y;
+      generateParticleData.push({ geometry, shapes, textHeight });
+
+      const textMaterial = new THREE.MeshBasicMaterial({
+        color: 0xf10000,
+        transparent: true,
+        opacity: 0,
+      });
+      const textMesh = new THREE.Mesh(geometry, textMaterial);
+      textMesh.position.y = yOffset;
+      yOffset += geometry.boundingBox.max.y + this.data.textSize;
     }
+
+    return {
+      yOffset,
+      generateParticleData,
+    };
+  }
+
+  createText(text) {
+    const { generateParticleData, yOffset } = this.initText(text);
 
     const allGeoParticles = [];
     let y = yOffset / 2;
-    for (const { geometry, shapes, textHeight } of dataList) {
+    for (const { geometry, shapes, textHeight } of generateParticleData) {
       let thePoints = [];
       const randomPoints = [];
       geometry.computeBoundingBox();
@@ -255,7 +277,7 @@ class CreateParticles {
           randomPoints.push(
             random(-100, 100),
             random(-100, 100),
-            random(-2000, 100)
+            random(-2000, 0)
           );
           colors.push(
             this.colorChange.r,
@@ -289,7 +311,7 @@ class CreateParticles {
 
     const material = new THREE.ShaderMaterial({
       uniforms: {
-        color: { value: new THREE.Color(0xffffff) },
+        color: { value: new THREE.Color(0xf10000) },
         pointTexture: { value: this.particleImg },
       },
       vertexShader: document.getElementById("vertexshader").textContent,
@@ -313,6 +335,47 @@ class CreateParticles {
       });
     }
   }
+
+  // createTextObject(textMeshList, yOffset) {
+  //   const boderYOffset = textMeshList.length * 0.3;
+  //   let _yOffset = yOffset / 2 - boderYOffset;
+  //   let _totalHeight = boderYOffset * 2;
+  //   for (const textMesh of textMeshList) {
+  //     const geo = textMesh.geometry;
+  //     textMesh.position.y = _yOffset;
+  //     textMesh.position.z = 6;
+  //     // cubeMesh.add(textMesh);
+  //     this.scene.add(textMesh);
+  //     const _textHeight = geo.boundingBox.max.y;
+  //     _totalHeight += this.data.textSize + _textHeight;
+  //     _yOffset -= this.data.textSize + _textHeight;
+  //   }
+
+  //   const rate = 192 / 1150;
+  //   // 创建立方体
+  //   const geometry = new THREE.BoxGeometry(
+  //     _totalHeight * rate,
+  //     _totalHeight,
+  //     10
+  //   );
+  //   geometry.center();
+  //   geometry.computeBoundingBox();
+  //   const textureLoader = new THREE.TextureLoader();
+  //   const texture = textureLoader.load("./texture.png"); // 替换为你的图片路径
+  //   const material = new THREE.MeshBasicMaterial({
+  //     color: 0xffffff,
+  //     map: texture,
+  //     transparent: true,
+  //     opacity: 0,
+  //   });
+  //   const cubeMesh = new THREE.Mesh(geometry, material);
+  //   cubeMesh.position.y = 0;
+  //   cubeMesh.position.x = 0;
+  //   cubeMesh.position.z = 0;
+  //   cubeMesh.add;
+  //   this.scene.add(cubeMesh);
+  //   this.cubeMesh = cubeMesh;
+  // }
 
   distance(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
