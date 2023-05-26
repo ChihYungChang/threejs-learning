@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { random } from "three/addons/utils/CommonUtils.js";
 
 // Canvas
 const canvas = document.querySelector("#mainCanvas");
@@ -11,7 +12,7 @@ const scene = new THREE.Scene();
  */
 const textureLoader = new THREE.TextureLoader();
 const particleTexture = textureLoader.load(
-  "https://gw.alicdn.com/imgextra/i3/O1CN01DO6Ed61QtcMKsVnK2_!!6000000002034-2-tps-56-56.png"
+  "https://res.cloudinary.com/dfvtkoboz/image/upload/v1605013866/particle_a64uzf.png"
 );
 
 /**
@@ -19,22 +20,28 @@ const particleTexture = textureLoader.load(
  */
 // geometry
 const particlesGeometry = new THREE.BufferGeometry();
-const count = 4000;
+const count = 6000;
 const positions = new Float32Array(count * 3); // 每个点由三个坐标值组成（x, y, z）
 const colors = new Float32Array(count * 3); // 每个颜色由三个rgb组成
-for (let i = 0; i < count * 3; i += 3) {
-  positions[i] = (Math.random() - 0.5) * 10;
-  positions[i + 1] = (Math.random() - 0.5) * 10;
-  positions[i + 2] = (Math.random() - 0.5) * 10;
-  colors[i] = Math.random();
-  colors[i + 1] = Math.random();
+const targetPositions = new Float32Array(count * 3);
+for (let i = 0; i < count; i += 3) {
+  positions[i] = random(-5, 5);
+  positions[i + 1] = random(-5, 5);
+  positions[i + 2] = random(10, 5);
+  colors[i] = 255;
+  colors[i + 1] = 255;
   colors[i + 2] = Math.random();
+
+  // targetPositions[i] = random(, 5);
+  // targetPositions[i + 1] = random(-5, 5);
+  // targetPositions[i + 2] = random(10, 5);
 }
 particlesGeometry.setAttribute(
   "position",
   new THREE.BufferAttribute(positions, 3)
 );
 particlesGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+particlesGeometry.setAttribute("target", new THREE.BufferAttribute(colors, 3));
 
 // material
 const pointMaterial = new THREE.PointsMaterial({
@@ -42,9 +49,9 @@ const pointMaterial = new THREE.PointsMaterial({
   sizeAttenuation: true,
 });
 
-// pointMaterial.color = new THREE.Color("#ff88cc");
+// pointMaterial.color = new THREE.Color("#ffffff");
 pointMaterial.map = particleTexture;
-// pointMaterial.alphaMap = particleTexture;
+pointMaterial.alphaMap = particleTexture;
 pointMaterial.transparent = true;
 // pointMaterial.alphaTest = 0.001
 // pointMaterial.depthTest = false
@@ -54,10 +61,6 @@ pointMaterial.vertexColors = true;
 
 const particles = new THREE.Points(particlesGeometry, pointMaterial);
 scene.add(particles);
-
-// cube
-// const cube = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial())
-// scene.add(cube)
 
 /**
  * Lights
@@ -78,12 +81,8 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(0, 0, 2);
-
-// const controls = new OrbitControls(camera, canvas);
-// controls.enableDamping = true;
-// controls.autoRotateSpeed = 1;
-// controls.zoomSpeed = 0.3;
+camera.position.set(0.5, 0.5, 5);
+camera.lookAt(0, 0, 0);
 
 const axesHelper = new THREE.AxesHelper(10);
 scene.add(axesHelper);
@@ -96,19 +95,44 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-// listenResize(sizes, camera, renderer);
-// dbClkfullScreen(document.body);
-
 // Animations
 const clock = new THREE.Clock();
 
+const ease = 0.05;
+
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
-  // particles.position.x = 0.1 * Math.sin(elapsedTime)
+  // particles.position.x = 0.1 * Math.sin(elapsedTime);
 
-  for (let i = 0; i < count; i += 1) {
-    const x = particlesGeometry.attributes.position.getX(i);
-    particlesGeometry.attributes.position.setY(i, Math.sin(elapsedTime + x));
+  const DD = 0.5;
+
+  for (let i = 0; i < count; i += 3) {
+    const px = particlesGeometry.attributes.position.getX(i);
+    const py = particlesGeometry.attributes.position.getY(i);
+    const pz = particlesGeometry.attributes.position.getZ(i);
+    const posVec = new THREE.Vector3(px, py, pz);
+    const initVec = new THREE.Vector3(0, 0, 0);
+    const force = new THREE.Vector3();
+    force.subVectors(initVec, posVec);
+
+    // 绕原点旋转
+    if (initVec.distanceTo(posVec) < DD) {
+      var rotationSpeed = Math.random() * 0.5; // 旋转速度
+      var axis = new THREE.Vector3(0, 1, 0); // 旋转轴
+      posVec.applyAxisAngle(axis, rotationSpeed);
+      posVec.y = random(-DD, DD);
+    } else {
+      posVec.x += force.normalize().x * ease;
+      posVec.y += force.normalize().y * ease;
+      posVec.z += force.normalize().z * ease;
+    }
+
+    particlesGeometry.attributes.position.setXYZ(
+      i,
+      posVec.x,
+      posVec.y,
+      posVec.z
+    );
   }
   particlesGeometry.attributes.position.needsUpdate = true;
 
