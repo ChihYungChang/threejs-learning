@@ -23,18 +23,13 @@ const particlesGeometry = new THREE.BufferGeometry();
 const count = 6000;
 const positions = new Float32Array(count * 3); // 每个点由三个坐标值组成（x, y, z）
 const colors = new Float32Array(count * 3); // 每个颜色由三个rgb组成
-const targetPositions = new Float32Array(count * 3);
 for (let i = 0; i < count; i += 3) {
   positions[i] = random(-5, 5);
   positions[i + 1] = random(-5, 5);
   positions[i + 2] = random(10, 5);
   colors[i] = 255;
-  colors[i + 1] = 255;
-  colors[i + 2] = Math.random();
-
-  // targetPositions[i] = random(, 5);
-  // targetPositions[i + 1] = random(-5, 5);
-  // targetPositions[i + 2] = random(10, 5);
+  colors[i + 1] = 234;
+  colors[i + 2] = 0;
 }
 particlesGeometry.setAttribute(
   "position",
@@ -102,6 +97,7 @@ const ease = 0.05;
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+  console.log(elapsedTime);
   // particles.position.x = 0.1 * Math.sin(elapsedTime);
 
   const DD = 0.5;
@@ -136,7 +132,6 @@ const tick = () => {
   }
   particlesGeometry.attributes.position.needsUpdate = true;
 
-  // controls.update();
   pointMaterial.needsUpdate = true;
 
   // Render
