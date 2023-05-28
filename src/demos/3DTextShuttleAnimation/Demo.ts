@@ -30,14 +30,6 @@ const maxCameraDistance = 50;
 const objects: THREE.Object3D<THREE.Event>[] = [];
 
 /**
- * 初始化文字
- */
-const loadFont = (): Promise<Font> => {
-  const loader = new FontLoader();
-  return loader.loadAsync("./font/Alibaba PuHuiTi 2.0 115 Black_Regular.json");
-};
-
-/**
  * 创建几何文字
  */
 const createTextGeometry = (
@@ -69,6 +61,11 @@ const createTextGeometry = (
 export class Demo implements Experience {
   resources: Resource[] = [
     { name: "textTexture", path: "./texture/gold.png", type: "texture" },
+    {
+      name: "textFont",
+      path: "./font/Alibaba PuHuiTi 2.0 115 Black_Regular.json",
+      type: "font",
+    },
   ];
 
   constructor(private engine: Engine) {
@@ -96,7 +93,7 @@ export class Demo implements Experience {
 
     this.engine.scene.add(directionalLight);
 
-    const font = await loadFont();
+    const font = this.engine.resources.getItem("textFont");
 
     const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const textTexture = this.engine.resources.getItem("textTexture");
@@ -105,7 +102,7 @@ export class Demo implements Experience {
     for (let i = 0; i < TEXT.length; i += 1) {
       const strArr = TEXT[i].split("");
       const obj = new THREE.Object3D();
-      let y = THREE.MathUtils.randFloat(0, 50);
+      let y = THREE.MathUtils.randFloat(0, 20);
       let x = THREE.MathUtils.randFloat(-50, 50);
       let z = THREE.MathUtils.randFloat(-50, 50);
       for (let j = 0; j < strArr.length; j++) {

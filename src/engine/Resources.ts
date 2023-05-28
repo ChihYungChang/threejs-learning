@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { EventEmitter } from "./utilities/EventEmitter";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 
 export type Resource =
   | {
@@ -15,12 +16,13 @@ export type Resource =
       path: string[];
     };
 
-type AssetType = "gltf" | "texture" | "cubeTexture";
+type AssetType = "gltf" | "texture" | "cubeTexture" | "font";
 
 type Loaders = {
   gltf: GLTFLoader;
   texture: THREE.TextureLoader;
   cubeTexture: THREE.CubeTextureLoader;
+  font: FontLoader;
 };
 
 const dracoLoader = new DRACOLoader();
@@ -54,6 +56,7 @@ export class Resources extends EventEmitter {
       gltf: new GLTFLoader(this.loadingManager),
       texture: new THREE.TextureLoader(this.loadingManager),
       cubeTexture: new THREE.CubeTextureLoader(this.loadingManager),
+      font: new FontLoader(this.loadingManager),
     };
   }
 
@@ -89,6 +92,12 @@ export class Resources extends EventEmitter {
           break;
         case "cubeTexture":
           this.loaders.cubeTexture.load(
+            resource.path,
+            (file) => (this.items[resource.name] = file)
+          );
+          break;
+        case "font":
+          this.loaders.font.load(
             resource.path,
             (file) => (this.items[resource.name] = file)
           );
