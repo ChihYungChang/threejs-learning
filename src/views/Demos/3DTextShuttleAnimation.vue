@@ -14,9 +14,9 @@ onMounted(() => {
     info: {
       twitter: "https://twitter.com/chihyungchang66",
       github: "https://github.com/ChihYungChang/threejs-learning",
-      description: "三维文本穿梭动画",
-      documentTitle: "三维文本穿梭动画",
-      title: "三维文本穿梭动画",
+      description: "3D文本穿梭动画",
+      documentTitle: "3D文本穿梭动画",
+      title: "3D文本穿梭动画",
     },
   });
 });

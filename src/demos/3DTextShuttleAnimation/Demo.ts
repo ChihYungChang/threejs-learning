@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { Font, FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { Experience } from "../../engine/Experience";
-import { Resource } from "../../engine/Resources";
+import { Resource, Resources } from "../../engine/Resources";
 
 const TEXT = [
   "仁为万善之本",
@@ -24,8 +24,8 @@ const TEXT = [
   "待人宽和，世事练达",
 ];
 
-const fontSize = 2;
-const maxCameraDistance = 100;
+const fontSize = 4;
+const maxCameraDistance = 50;
 
 const objects: THREE.Object3D<THREE.Event>[] = [];
 
@@ -34,14 +34,7 @@ const objects: THREE.Object3D<THREE.Event>[] = [];
  */
 const loadFont = (): Promise<Font> => {
   const loader = new FontLoader();
-  return new Promise((resolve, reject) => {
-    loader.load(
-      "src/assets/fonts/Alibaba PuHuiTi 2.0 115 Black_Regular.json",
-      function (font) {
-        resolve(font);
-      }
-    );
-  });
+  return loader.loadAsync("./font/Alibaba PuHuiTi 2.0 115 Black_Regular.json");
 };
 
 /**
@@ -74,17 +67,20 @@ const createTextGeometry = (
 };
 
 export class Demo implements Experience {
-  resources: Resource[] = [];
+  resources: Resource[] = [
+    { name: "textTexture", path: "./texture/gold.png", type: "texture" },
+  ];
 
-  constructor(private engine: Engine) {}
+  constructor(private engine: Engine) {
+    engine.camera.instance.position.z = 150;
+    engine.camera.instance.position.y = 30;
+  }
 
   async init() {
     const plane = new THREE.Mesh(
       new THREE.PlaneGeometry(200, 200),
       new THREE.MeshStandardMaterial({
         color: 0xffffff,
-        transparent: true,
-        opacity: 0.5,
       })
     );
 
@@ -94,30 +90,33 @@ export class Demo implements Experience {
     this.engine.scene.add(plane);
     this.engine.scene.add(new THREE.AmbientLight(0xffffff, 0.1));
 
-    let directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    let directionalLight = new THREE.DirectionalLight(0xffffff, 0.1);
     directionalLight.castShadow = true;
-    directionalLight.position.set(2, 2, 2);
+    directionalLight.position.set(200, 200, 200);
 
     this.engine.scene.add(directionalLight);
 
     const font = await loadFont();
 
-    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xf10ffff }); // 使用基础材质
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const textTexture = this.engine.resources.getItem("textTexture");
+    textMaterial.map = textTexture;
 
     for (let i = 0; i < TEXT.length; i += 1) {
       const strArr = TEXT[i].split("");
       const obj = new THREE.Object3D();
-      let y = THREE.MathUtils.randFloat(-50, 50);
+      let y = THREE.MathUtils.randFloat(0, 50);
       let x = THREE.MathUtils.randFloat(-50, 50);
+      let z = THREE.MathUtils.randFloat(-50, 50);
       for (let j = 0; j < strArr.length; j++) {
         const textGeo = createTextGeometry(font, strArr[j], { size: fontSize });
 
         const textMesh = new THREE.Mesh(textGeo, textMaterial);
         textMesh.position.x = x;
         textMesh.position.y = y;
-        textMesh.position.z = 0;
+        textMesh.position.z = z;
 
-        y += fontSize + 0.5;
+        y += fontSize + fontSize / 2;
         obj.add(textMesh);
         objects.push(obj);
       }
@@ -132,7 +131,9 @@ export class Demo implements Experience {
       obj.position.z += 0.1;
 
       if (obj.position.z > maxCameraDistance) {
-        obj.position.z = THREE.MathUtils.randFloat(-200, 0);
+        obj.position.z = -50;
+        obj.position.x = THREE.MathUtils.randFloat(-50, 50);
+        obj.position.y = THREE.MathUtils.randFloat(0, 50);
       }
     }
   }
