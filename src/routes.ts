@@ -2,6 +2,7 @@ import Home from "./views/Home.vue";
 import Box from "./views/Demos/Box.vue";
 import TextShuttleAnimation from "./views/Demos/3DTextShuttleAnimation.vue";
 import TextWrappingIrregularCurveAnimation from "./views/Demos/3DTextWrappingIrregularCurveAnimation.vue";
+import ModelMetalTexture from "./views/Demos/3DModelMetalTexture.vue";
 
 /** @type {import('vue-router').RouterOptions['routes']} */
 export const routes = [
@@ -31,6 +32,14 @@ export const routes = [
           coverPath: "3DTextWrappingIrregularCurveAnimation/preview.png",
         },
         component: TextWrappingIrregularCurveAnimation,
+      },
+      {
+        path: "/3DModelMetalTexture",
+        meta: {
+          title: "模型金属材质",
+          coverPath: "3DModelMetalTexture/preview.png",
+        },
+        component: ModelMetalTexture,
       },
     ],
   },
