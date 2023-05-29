@@ -1,9 +1,8 @@
 import { Engine } from "../../engine/Engine";
 import * as THREE from "three";
-import { Font, FontLoader } from "three/examples/jsm/loaders/FontLoader";
-import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { Experience } from "../../engine/Experience";
-import { Resource, Resources } from "../../engine/Resources";
+import { Resource } from "../../engine/Resources";
+import { createTextGeometry } from "../../utils/font";
 
 const TEXT = [
   "仁为万善之本",
@@ -27,37 +26,6 @@ const TEXT = [
 const fontSize = 4;
 const maxCameraDistance = 50;
 
-const objects: THREE.Object3D<THREE.Event>[] = [];
-
-/**
- * 创建几何文字
- */
-const createTextGeometry = (
-  font: Font,
-  text: string,
-  config: { size: number }
-) => {
-  const def = {
-    size: 1,
-    height: 0.5,
-    curveSegments: 3,
-    bevelEnabled: true,
-    bevelThickness: 0.02,
-    bevelSize: 0.01,
-    bevelOffset: 0,
-    bevelSegments: 5,
-  };
-  if (config) {
-    Object.assign(def, config);
-  }
-  const geometry = new TextGeometry(text, {
-    font,
-    ...def,
-  });
-
-  return geometry;
-};
-
 export class Demo implements Experience {
   resources: Resource[] = [
     { name: "textTexture", path: "./texture/gold.png", type: "texture" },
@@ -68,54 +36,58 @@ export class Demo implements Experience {
     },
   ];
 
+  objects: THREE.Object3D<THREE.Event>[] = [];
+
   constructor(private engine: Engine) {
-    engine.camera.instance.position.z = 150;
-    engine.camera.instance.position.y = 30;
+    engine.camera.instance.position.z = 200;
+    engine.camera.instance.position.y = 25;
   }
 
   async init() {
+    const axesHelper = new THREE.AxesHelper(100);
+    this.engine.scene.add(axesHelper);
+
     const plane = new THREE.Mesh(
       new THREE.PlaneGeometry(200, 200),
       new THREE.MeshStandardMaterial({
         color: 0xffffff,
       })
     );
-
     plane.rotation.x = -Math.PI / 2;
     plane.receiveShadow = true;
-
     this.engine.scene.add(plane);
-    this.engine.scene.add(new THREE.AmbientLight(0xffffff, 0.1));
 
-    let directionalLight = new THREE.DirectionalLight(0xffffff, 0.1);
+    this.engine.scene.add(new THREE.AmbientLight(0x404040, 5));
+
+    let directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.castShadow = true;
-    directionalLight.position.set(200, 200, 200);
+    directionalLight.position.set(0, 50, 0);
 
     this.engine.scene.add(directionalLight);
 
-    const font = this.engine.resources.getItem("textFont");
-
-    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const textMaterial = new THREE.MeshStandardMaterial({ color: 0xf7ff00 });
     const textTexture = this.engine.resources.getItem("textTexture");
     textMaterial.map = textTexture;
 
-    for (let i = 0; i < TEXT.length; i += 1) {
+    const font = this.engine.resources.getItem("textFont");
+    for (let i = 0; i < TEXT.length; i++) {
       const strArr = TEXT[i].split("");
       const obj = new THREE.Object3D();
       let y = THREE.MathUtils.randFloat(0, 20);
       let x = THREE.MathUtils.randFloat(-50, 50);
       let z = THREE.MathUtils.randFloat(-50, 50);
       for (let j = 0; j < strArr.length; j++) {
-        const textGeo = createTextGeometry(font, strArr[j], { size: fontSize });
-
-        const textMesh = new THREE.Mesh(textGeo, textMaterial);
+        const textGeometry = createTextGeometry(strArr[j], {
+          font,
+          size: fontSize,
+        });
+        const textMesh = new THREE.Mesh(textGeometry, textMaterial);
         textMesh.position.x = x;
         textMesh.position.y = y;
         textMesh.position.z = z;
-
         y += fontSize + fontSize / 2;
         obj.add(textMesh);
-        objects.push(obj);
+        this.objects.push(obj);
       }
       this.engine.scene.add(obj);
     }
@@ -124,9 +96,8 @@ export class Demo implements Experience {
   resize() {}
 
   update() {
-    for (let obj of objects) {
+    for (const obj of this.objects) {
       obj.position.z += 0.1;
-
       if (obj.position.z > maxCameraDistance) {
         obj.position.z = -50;
         obj.position.x = THREE.MathUtils.randFloat(-50, 50);

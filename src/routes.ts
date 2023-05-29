@@ -1,6 +1,7 @@
 import Home from "./views/Home.vue";
 import Box from "./views/Demos/Box.vue";
 import TextShuttleAnimation from "./views/Demos/3DTextShuttleAnimation.vue";
+import TextWrappingIrregularCurveAnimation from "./views/Demos/3DTextWrappingIrregularCurveAnimation.vue";
 
 /** @type {import('vue-router').RouterOptions['routes']} */
 export const routes = [
@@ -22,6 +23,14 @@ export const routes = [
           coverPath: "3DTextShuttleAnimation/preview.png",
         },
         component: TextShuttleAnimation,
+      },
+      {
+        path: "/3DTextWrappingIrregularCurveAnimation",
+        meta: {
+          title: "3D文本不规则环绕动画",
+          coverPath: "3DTextWrappingIrregularCurveAnimation/preview.png",
+        },
+        component: TextWrappingIrregularCurveAnimation,
       },
     ],
   },
