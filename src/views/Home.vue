@@ -45,6 +45,7 @@ const onClickSwitchCase = (path: string) => {
     height: 100vh;
     max-width: 300px;
     min-width: 300px;
+    overflow-y: scroll;
     .card {
       margin: 10px;
       border-radius: 3px;

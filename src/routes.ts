@@ -3,6 +3,7 @@ import Box from "./views/Demos/Box.vue";
 import TextShuttleAnimation from "./views/Demos/3DTextShuttleAnimation.vue";
 import TextWrappingIrregularCurveAnimation from "./views/Demos/3DTextWrappingIrregularCurveAnimation.vue";
 import ModelMetalTexture from "./views/Demos/3DModelMetalTexture.vue";
+import ParticleAnimationWithTween from "./views/Demos/ParticleAnimationWithTween.vue";
 
 /** @type {import('vue-router').RouterOptions['routes']} */
 export const routes = [
@@ -40,6 +41,14 @@ export const routes = [
           coverPath: "3DModelMetalTexture/preview.png",
         },
         component: ModelMetalTexture,
+      },
+      {
+        path: "/ParticleAnimationWithTween",
+        meta: {
+          title: "使用Tween实现粒子动画",
+          coverPath: "ParticleAnimationWithTween/preview.png",
+        },
+        component: ParticleAnimationWithTween,
       },
     ],
   },

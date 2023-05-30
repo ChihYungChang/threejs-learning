@@ -11,6 +11,7 @@
   "dependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.3",
+    "@tweenjs/tween.js": "^20.0.3",
     "lil-gui": "^0.18.1",
     "sass": "^1.62.1",
     "stats.js": "^0.17.0",
