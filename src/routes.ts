@@ -4,6 +4,7 @@ import TextShuttleAnimation from "./views/Demos/3DTextShuttleAnimation.vue";
 import TextWrappingIrregularCurveAnimation from "./views/Demos/3DTextWrappingIrregularCurveAnimation.vue";
 import ModelMetalTexture from "./views/Demos/3DModelMetalTexture.vue";
 import ParticleAnimationWithTween from "./views/Demos/ParticleAnimationWithTween.vue";
+import TextWrappingSphereAnimation from "./views/Demos/3DTextWrappingSphereAnimation.vue";
 
 /** @type {import('vue-router').RouterOptions['routes']} */
 export const routes = [
@@ -49,6 +50,14 @@ export const routes = [
           coverPath: "ParticleAnimationWithTween/preview.png",
         },
         component: ParticleAnimationWithTween,
+      },
+      {
+        path: "/3DTextWrappingSphereAnimation",
+        meta: {
+          title: "使用Tween实现粒子动画",
+          coverPath: "3DTextWrappingSphereAnimation/preview.png",
+        },
+        component: TextWrappingSphereAnimation,
       },
     ],
   },
