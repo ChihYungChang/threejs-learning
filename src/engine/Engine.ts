@@ -79,5 +79,6 @@ export class Engine {
 
   destory() {
     this.infoUI.destory();
+    this.scene.clear();
   }
 }
