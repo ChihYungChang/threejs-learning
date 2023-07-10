@@ -5,6 +5,7 @@ import TextWrappingIrregularCurveAnimation_003 from "./views/Demos/003_TextWrapp
 import ModelMetalTexture_004 from "./views/Demos/004_3DModelMetalTexture.vue";
 import ParticleAnimationWithTween_005 from "./views/Demos/005_ParticleAnimationWithTween.vue";
 import TextWrappingSphereAnimation_006 from "./views/Demos/006_TextWrappingSphereAnimation.vue";
+import FbxModelAnimation_007 from "./views/Demos/007_FbxModelAnimation.vue";
 
 /** @type {import('vue-router').RouterOptions['routes']} */
 export const routes = [
@@ -58,6 +59,14 @@ export const routes = [
           coverPath: "006_TextWrappingSphereAnimation/preview.png",
         },
         component: TextWrappingSphereAnimation_006,
+      },
+      {
+        path: "/007_FbxModelAnimation",
+        meta: {
+          title: "老虎模型",
+          coverPath: "007_FbxModelAnimation/preview.png",
+        },
+        component: FbxModelAnimation_007,
       },
     ],
   },

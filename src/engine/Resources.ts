@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { EventEmitter } from "./utilities/EventEmitter";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
@@ -16,10 +17,11 @@ export type Resource =
       path: string[];
     };
 
-type AssetType = "gltf" | "texture" | "cubeTexture" | "font";
+type AssetType = "gltf" | "texture" | "cubeTexture" | "font" | "fbx";
 
 type Loaders = {
   gltf: GLTFLoader;
+  fbx: FBXLoader;
   texture: THREE.TextureLoader;
   cubeTexture: THREE.CubeTextureLoader;
   font: FontLoader;
@@ -54,6 +56,7 @@ export class Resources extends EventEmitter {
   private initLoaders() {
     this.loaders = {
       gltf: new GLTFLoader(this.loadingManager),
+      fbx: new FBXLoader(this.loadingManager),
       texture: new THREE.TextureLoader(this.loadingManager),
       cubeTexture: new THREE.CubeTextureLoader(this.loadingManager),
       font: new FontLoader(this.loadingManager),
@@ -80,6 +83,12 @@ export class Resources extends EventEmitter {
         case "gltf":
           this.loaders.gltf.setDRACOLoader(dracoLoader);
           this.loaders.gltf.load(
+            resource.path,
+            (file) => (this.items[resource.name] = file)
+          );
+          break;
+        case "fbx":
+          this.loaders.fbx.load(
             resource.path,
             (file) => (this.items[resource.name] = file)
           );
