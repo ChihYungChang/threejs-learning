@@ -8,7 +8,12 @@ export class Demo implements Experience {
   resources: Resource[] = [
     {
       name: "fbxTiger",
-      path: "./models/fbx/Tiger222.fbx",
+      path: "./models/fbx/Tiger444.fbx",
+      type: "fbx",
+    },
+    {
+      name: "fbxWolf",
+      path: "./models/fbx/Wolf_One_fbx7.4_binary.fbx",
       type: "fbx",
     },
   ];
@@ -62,25 +67,30 @@ export class Demo implements Experience {
     // this.engine.scene.add(tiger.scene);
 
     const fbxTiger: THREE.Group = this.engine.resources.getItem("fbxTiger");
-
-    //设置模型的每个部位都可以投影
-    fbxTiger.traverse(function (child) {
-      if ((child as any).isMesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-      }
-    });
+    // const fbxWolf: THREE.Group = this.engine.resources.getItem("fbxWolf");
+    console.log(fbxTiger);
+    // console.log(fbxWolf);
+    // fbxTiger
     this.mixer = new THREE.AnimationMixer(fbxTiger);
-    const action = this.mixer.clipAction(fbxTiger.animations[5]);
-    action.play();
+
+    // 遍历模型的所有动画轨道
+
+    // 创建动画轨道的动作（AnimationAction）
+    const action = this.mixer?.clipAction(fbxTiger.animations[1]);
+
+    // 循环播放动画
+    action?.setLoop(THREE.LoopRepeat, 10);
+    action?.play();
+
+    // 将模型添加到场景中
     this.engine.scene.add(fbxTiger);
   }
 
   resize() {}
 
-  update() {
+  update(time: number) {
     if (this.mixer) {
-      this.mixer.update(0.01);
+      this.mixer.update(time);
     }
   }
 }
