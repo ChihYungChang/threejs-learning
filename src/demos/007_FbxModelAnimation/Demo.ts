@@ -12,9 +12,19 @@ export class Demo implements Experience {
       type: "fbx",
     },
     {
-      name: "fbxWolf",
-      path: "./models/fbx/Wolf_One_fbx7.4_binary.fbx",
-      type: "fbx",
+      name: "colorMap",
+      path: "./texture/Tiger444/FbxTemp_0001.jpg",
+      type: "texture",
+    },
+    {
+      name: "grayscaleMap",
+      path: "./texture/Tiger444/FbxTemp_0002.jpg",
+      type: "texture",
+    },
+    {
+      name: "alphaMap",
+      path: "./texture/Tiger444/Tiger_O.jpg",
+      type: "texture",
     },
   ];
 
@@ -67,20 +77,34 @@ export class Demo implements Experience {
     // this.engine.scene.add(tiger.scene);
 
     const fbxTiger: THREE.Group = this.engine.resources.getItem("fbxTiger");
-    // const fbxWolf: THREE.Group = this.engine.resources.getItem("fbxWolf");
-    console.log(fbxTiger);
-    // console.log(fbxWolf);
-    // fbxTiger
+
+    // // FbxTemp_0001.jpg
+    // const colorMap = this.engine.resources.getItem("colorMap");
+    // // FbxTemp_0002.jpg
+    // const grayscaleMap = this.engine.resources.getItem("grayscaleMap");
+    // // Tiger_O.jpg
+    // const alphaMap = this.engine.resources.getItem("alphaMap");
+
+    // 遍历模型的子网格（submeshes）
+    fbxTiger.traverse((child: any) => {
+      if (child.isMesh) {
+        child.material.side = THREE.DoubleSide;
+        child.material.alphaTest = 0.2;
+        child.material.transparent = false;
+        child.material.needsUpdate = true;
+      }
+    });
+
     this.mixer = new THREE.AnimationMixer(fbxTiger);
 
     // 遍历模型的所有动画轨道
 
     // 创建动画轨道的动作（AnimationAction）
-    const action = this.mixer?.clipAction(fbxTiger.animations[1]);
+    // const action = this.mixer?.clipAction(fbxTiger.animations[1]);
 
-    // 循环播放动画
-    action?.setLoop(THREE.LoopRepeat, 10);
-    action?.play();
+    // // 循环播放动画
+    // action?.setLoop(THREE.LoopRepeat, 10);
+    // action?.play();
 
     // 将模型添加到场景中
     this.engine.scene.add(fbxTiger);
