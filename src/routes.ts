@@ -6,6 +6,7 @@ import ModelMetalTexture_004 from "./views/Demos/004_3DModelMetalTexture.vue";
 import ParticleAnimationWithTween_005 from "./views/Demos/005_ParticleAnimationWithTween.vue";
 import TextWrappingSphereAnimation_006 from "./views/Demos/006_TextWrappingSphereAnimation.vue";
 import FbxModelAnimation_007 from "./views/Demos/007_FbxModelAnimation.vue";
+import BlackHoleAnimation_008 from "./views/Demos/008_BlackHoleAnimation.vue";
 
 /** @type {import('vue-router').RouterOptions['routes']} */
 export const routes = [
@@ -67,6 +68,14 @@ export const routes = [
           coverPath: "007_FbxModelAnimation/preview.png",
         },
         component: FbxModelAnimation_007,
+      },
+      {
+        path: "/008_BlackHoleAnimation",
+        meta: {
+          title: "黑洞动画",
+          coverPath: "008_BlackHoleAnimation/preview.png",
+        },
+        component: BlackHoleAnimation_008,
       },
     ],
   },
