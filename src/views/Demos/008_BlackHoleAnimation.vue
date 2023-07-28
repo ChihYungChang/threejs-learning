@@ -14,9 +14,9 @@ onMounted(() => {
     info: {
       twitter: "https://twitter.com/chihyungchang66",
       github: "https://github.com/ChihYungChang/threejs-learning",
-      description: "使用Three.js 中的精灵实现序列图动画效果",
-      documentTitle: "黑洞动画",
-      title: "黑洞动画",
+      description: "优化飞船模型材质，实现黑洞帧序列动画",
+      documentTitle: "飞船从黑洞飞出",
+      title: "飞船从黑洞飞出",
     },
   });
 });
