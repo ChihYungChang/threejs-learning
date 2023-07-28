@@ -2,43 +2,27 @@ import { Engine } from "../../engine/Engine";
 import * as THREE from "three";
 import { Experience } from "../../engine/Experience";
 import { Resource } from "../../engine/Resources";
-import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
 export class Demo implements Experience {
   resources: Resource[] = [
     {
-      name: "fbxTiger",
-      path: "./models/fbx/Tiger444.fbx",
+      name: "tiger",
+      path: "./models/fbx/tiger.fbx",
       type: "fbx",
-    },
-    {
-      name: "colorMap",
-      path: "./texture/Tiger444/FbxTemp_0001.jpg",
-      type: "texture",
-    },
-    {
-      name: "grayscaleMap",
-      path: "./texture/Tiger444/FbxTemp_0002.jpg",
-      type: "texture",
-    },
-    {
-      name: "alphaMap",
-      path: "./texture/Tiger444/Tiger_O.jpg",
-      type: "texture",
     },
   ];
 
   mixer: THREE.AnimationMixer | undefined;
 
   constructor(private engine: Engine) {
-    engine.camera.instance.position.z = 250;
-    engine.camera.instance.position.y = 100;
-    engine.camera.instance.position.x = 100;
+    engine.camera.instance.position.z = 2;
+    engine.camera.instance.position.y = 2;
+    engine.camera.instance.position.x = 2;
   }
 
   init() {
     // 创建一个三维坐标轴
-    const axesHelper = new THREE.AxesHelper(200);
+    const axesHelper = new THREE.AxesHelper(10);
     this.engine.scene.add(axesHelper);
 
     // 添加环境光
@@ -56,37 +40,11 @@ export class Demo implements Experience {
     );
     this.engine.scene.add(directionalLightHelper);
 
-    // const tiger: GLTF = this.engine.resources.getItem("tiger");
-    // const texture = this.engine.resources.getItem("texture");
-    // let tigerTextureMaterial = new THREE.MeshStandardMaterial({
-    //   map: texture,
-    //   metalness: 0.2,
-    //   roughness: 0.07,
-    //   side: THREE.DoubleSide,
-    // });
-    // tiger.scene.traverse((node) => {
-    //   if (node instanceof THREE.Mesh) {
-    //     node.material = tigerTextureMaterial;
-    //     node.material.side = THREE.DoubleSide;
-    //     node.material.castShadow = true;
-    //     node.castShadow = true;
-    //     node.receiveShadow = true;
-    //     node.geometry.computeVertexNormals(); // 解决方案
-    //   }
-    // });
-    // this.engine.scene.add(tiger.scene);
-
-    const fbxTiger: THREE.Group = this.engine.resources.getItem("fbxTiger");
-
-    // // FbxTemp_0001.jpg
-    // const colorMap = this.engine.resources.getItem("colorMap");
-    // // FbxTemp_0002.jpg
-    // const grayscaleMap = this.engine.resources.getItem("grayscaleMap");
-    // // Tiger_O.jpg
-    // const alphaMap = this.engine.resources.getItem("alphaMap");
+    // FBX
+    const tiger = this.engine.resources.getItem("tiger");
 
     // 遍历模型的子网格（submeshes）
-    fbxTiger.traverse((child: any) => {
+    tiger.traverse((child: any) => {
       if (child.isMesh) {
         child.material.side = THREE.DoubleSide;
         child.material.alphaTest = 0.2;
@@ -94,20 +52,19 @@ export class Demo implements Experience {
         child.material.needsUpdate = true;
       }
     });
+    this.engine.scene.add(tiger);
 
-    this.mixer = new THREE.AnimationMixer(fbxTiger);
+    this.mixer = new THREE.AnimationMixer(tiger);
 
     // 遍历模型的所有动画轨道
+    console.log(tiger.animations);
 
     // 创建动画轨道的动作（AnimationAction）
-    // const action = this.mixer?.clipAction(fbxTiger.animations[1]);
+    const action = this.mixer?.clipAction(tiger.animations[0]);
 
-    // // 循环播放动画
-    // action?.setLoop(THREE.LoopRepeat, 10);
-    // action?.play();
-
-    // 将模型添加到场景中
-    this.engine.scene.add(fbxTiger);
+    // 循环播放动画
+    action?.setLoop(THREE.LoopRepeat, 10);
+    action?.play();
   }
 
   resize() {}

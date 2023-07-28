@@ -63,7 +63,7 @@ export const routes = [
       {
         path: "/007_FbxModelAnimation",
         meta: {
-          title: "老虎模型",
+          title: "老虎模型动画",
           coverPath: "007_FbxModelAnimation/preview.png",
         },
         component: FbxModelAnimation_007,
