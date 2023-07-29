@@ -103,10 +103,8 @@ export class Demo implements Experience {
     const shipPhongMaterial = new THREE.MeshPhongMaterial({
       map: baseColorMap,
       normalMap: normalMap,
-      // aoMap: aoRoughMetalMap,
-      shininess: 100,
-      // emissive: 0xffffff,
-      // emissiveIntensity: 0.1,
+      aoMap: aoRoughMetalMap,
+      shininess: 32,
       depthTest: true,
       specular: 0xffffff,
     });
@@ -128,15 +126,14 @@ export class Demo implements Experience {
     const action = this.mixer?.clipAction(ship.animations[0]);
 
     // 循环播放动画
-    action?.setLoop(THREE.LoopOnce, 1);
-    action.clampWhenFinished = true;
+    action?.setLoop(THREE.LoopRepeat, 100);
     action?.play();
   }
 
   resize() {}
 
   update(time: number) {
-    this.t += 0.1;
+    this.t += 0.13;
     if (this.t > 75) this.t = 0;
     if (this.mesh) {
       //@ts-ignore
