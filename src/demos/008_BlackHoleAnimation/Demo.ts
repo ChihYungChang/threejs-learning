@@ -16,18 +16,78 @@ export class Demo implements Experience {
       type: "texture",
     },
     {
-      name: "BaseColor",
+      name: "BaseColor1",
       path: "./texture/ship/BaseColor1.png",
       type: "texture",
     },
     {
-      name: "Normal",
+      name: "BaseColor2",
+      path: "./texture/ship/BaseColor2.png",
+      type: "texture",
+    },
+    {
+      name: "BaseColor3",
+      path: "./texture/ship/BaseColor3.png",
+      type: "texture",
+    },
+    {
+      name: "Normal1",
       path: "./texture/ship/Normal1.png",
+      type: "texture",
+    },
+    {
+      name: "Normal2",
+      path: "./texture/ship/Normal2.png",
+      type: "texture",
+    },
+    {
+      name: "Normal3",
+      path: "./texture/ship/Normal3.png",
       type: "texture",
     },
     {
       name: "Metalness1",
       path: "./texture/ship/Metalness1.png",
+      type: "texture",
+    },
+    {
+      name: "Metalness2",
+      path: "./texture/ship/Metalness2.png",
+      type: "texture",
+    },
+    {
+      name: "Metalness3",
+      path: "./texture/ship/Metalness3.png",
+      type: "texture",
+    },
+    {
+      name: "Roughness1",
+      path: "./texture/ship/Roughness1.png",
+      type: "texture",
+    },
+    {
+      name: "Roughness2",
+      path: "./texture/ship/Roughness2.png",
+      type: "texture",
+    },
+    {
+      name: "Roughness3",
+      path: "./texture/ship/Roughness3.png",
+      type: "texture",
+    },
+    {
+      name: "Light1",
+      path: "./texture/ship/Light1.png",
+      type: "texture",
+    },
+    {
+      name: "Light2",
+      path: "./texture/ship/Light2.png",
+      type: "texture",
+    },
+    {
+      name: "Light3",
+      path: "./texture/ship/Light3.png",
       type: "texture",
     },
   ];
@@ -65,7 +125,8 @@ export class Demo implements Experience {
 
     let directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.1);
     directionalLight2.castShadow = true;
-    directionalLight2.position.set(-5, 10, 3);
+    directionalLight2.position.set(-10, 0, 20);
+    directionalLight2.lookAt(0, 0, 20);
     this.engine.scene.add(directionalLight2);
 
     const DirectionalLightHelper = new THREE.DirectionalLightHelper(
@@ -80,6 +141,25 @@ export class Demo implements Experience {
     );
     this.engine.scene.add(DirectionalLightHelper2);
 
+    const ship = this.engine.resources.getItem("ship");
+    const baseColorMap1 = this.engine.resources.getItem("BaseColor1");
+    const normalMap1 = this.engine.resources.getItem("Normal1");
+    const MetalnessMap1 = this.engine.resources.getItem("Metalness1");
+    const RoughnessMap1 = this.engine.resources.getItem("Roughness1");
+    const LightMap1 = this.engine.resources.getItem("Light1");
+
+    const baseColorMap2 = this.engine.resources.getItem("BaseColor2");
+    const normalMap2 = this.engine.resources.getItem("Normal2");
+    const MetalnessMap2 = this.engine.resources.getItem("Metalness2");
+    const RoughnessMap2 = this.engine.resources.getItem("Roughness2");
+    const LightMap2 = this.engine.resources.getItem("Light2");
+
+    const baseColorMap3 = this.engine.resources.getItem("BaseColor3");
+    const normalMap3 = this.engine.resources.getItem("Normal3");
+    const MetalnessMap3 = this.engine.resources.getItem("Metalness3");
+    const RoughnessMap3 = this.engine.resources.getItem("Roughness3");
+    const LightMap3 = this.engine.resources.getItem("Light3");
+
     // 天空盒
     const skyGeo = new THREE.SphereGeometry(1000, 25, 25);
     const skyMaterial = new THREE.MeshPhongMaterial({
@@ -92,6 +172,26 @@ export class Demo implements Experience {
     skyBox.material.side = THREE.BackSide;
     skyBox.visible = true;
     this.engine.scene.add(skyBox);
+
+    // 材质球
+    const shaderGeo = new THREE.SphereGeometry(5, 25, 25);
+    const shaderMaterial = new THREE.MeshPhysicalMaterial({
+      map: baseColorMap1,
+      normalMap: normalMap1,
+      metalnessMap: MetalnessMap1,
+      roughnessMap: RoughnessMap1,
+      lightMapIntensity: 0.2,
+      lightMap: LightMap1,
+      metalness: 0.9, // 设置金属度，取值范围为 0 到 1
+      roughness: 0.9, // 设置粗糙度，取值范围为 0 到 1
+      normalScale: new THREE.Vector2(0.2, 0.2),
+      depthTest: true,
+      side: THREE.DoubleSide,
+    });
+    const shaderBox = new THREE.Mesh(shaderGeo, shaderMaterial);
+    shaderBox.position.set(0, 5, 0);
+    shaderBox.visible = true;
+    this.engine.scene.add(shaderBox);
 
     // // 黑洞
     // const geometry = new THREE.PlaneGeometry(18, 18);
@@ -121,11 +221,6 @@ export class Demo implements Experience {
       );
       this.texArr.push(texture);
     }
-
-    const ship = this.engine.resources.getItem("ship");
-    const baseColorMap = this.engine.resources.getItem("BaseColor");
-    const normalMap = this.engine.resources.getItem("Normal");
-    const MetalnessMap = this.engine.resources.getItem("Metalness1");
 
     // 顶点着色器代码
     const vertexShader = `
@@ -185,27 +280,58 @@ void main() {
       blending: THREE.AdditiveBlending,
     });
 
-    const shipPhongMaterial = new THREE.MeshPhongMaterial({
-      map: baseColorMap,
-      normalMap: normalMap,
-      aoMap: MetalnessMap,
+    const shipPhongMaterial1 = new THREE.MeshPhysicalMaterial({
+      map: baseColorMap1,
+      normalMap: normalMap1,
+      metalnessMap: MetalnessMap1,
+      roughnessMap: RoughnessMap1,
+      lightMapIntensity: 0.2,
+      lightMap: LightMap1,
+      metalness: 0.9, // 设置金属度，取值范围为 0 到 1
+      roughness: 0.9, // 设置粗糙度，取值范围为 0 到 1
       normalScale: new THREE.Vector2(0.2, 0.2),
-      shininess: 32,
       depthTest: true,
       side: THREE.DoubleSide,
-      specular: 0xffffff,
+    });
+
+    const shipPhongMaterial2 = new THREE.MeshPhysicalMaterial({
+      map: baseColorMap2,
+      normalMap: normalMap2,
+      metalnessMap: MetalnessMap2,
+      roughnessMap: RoughnessMap2,
+      lightMapIntensity: 0.2,
+      lightMap: LightMap2,
+      metalness: 0.9, // 设置金属度，取值范围为 0 到 1
+      roughness: 0.9, // 设置粗糙度，取值范围为 0 到 1
+      normalScale: new THREE.Vector2(0.2, 0.2),
+      depthTest: true,
+      side: THREE.DoubleSide,
+    });
+
+    const shipPhongMaterial3 = new THREE.MeshPhysicalMaterial({
+      map: baseColorMap3,
+      normalMap: normalMap3,
+      metalnessMap: MetalnessMap3,
+      roughnessMap: RoughnessMap3,
+      lightMapIntensity: 0.2,
+      lightMap: LightMap3,
+      metalness: 0.9, // 设置金属度，取值范围为 0 到 1
+      roughness: 0.9, // 设置粗糙度，取值范围为 0 到 1
+      normalScale: new THREE.Vector2(0.2, 0.2),
+      depthTest: true,
+      side: THREE.DoubleSide,
     });
 
     ship.children[1].children[0].material = shipBasicMaterial;
     ship.children[1].children[0].needsUpdate = true;
 
-    ship.children[1].children[1].material = shipPhongMaterial;
+    ship.children[1].children[1].material = shipPhongMaterial1;
     ship.children[1].children[1].needsUpdate = true;
 
-    ship.children[1].children[2].material = shipPhongMaterial;
+    ship.children[1].children[2].material = shipPhongMaterial2;
     ship.children[1].children[2].needsUpdate = true;
 
-    ship.children[1].children[3].material = shipPhongMaterial;
+    ship.children[1].children[3].material = shipPhongMaterial1;
     ship.children[1].children[3].needsUpdate = true;
 
     ship.scale.set(0.001, 0.001, 0.001);
