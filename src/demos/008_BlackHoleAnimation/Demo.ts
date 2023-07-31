@@ -194,7 +194,7 @@ export class Demo implements Experience {
     // this.engine.scene.add(shaderBox);
 
     // 黑洞
-    const geometry = new THREE.PlaneGeometry(18, 18);
+    const geometry = new THREE.PlaneGeometry(25, 18);
     const material = new THREE.MeshLambertMaterial({
       side: THREE.DoubleSide,
       transparent: true,
