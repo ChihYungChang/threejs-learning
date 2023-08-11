@@ -11,7 +11,7 @@ specifiers:
   '@types/node': ^17.0.45
   '@types/stats.js': ^0.17.0
   '@types/tailwindcss': ^3.1.0
-  '@types/three': ^0.152.1
+  '@types/three': ^0.155.0
   '@vitejs/plugin-vue': ^4.0.0
   autoprefixer: ^10.4.13
   lil-gui: ^0.18.1
@@ -19,7 +19,7 @@ specifiers:
   sass: ^1.62.1
   stats.js: ^0.17.0
   tailwindcss: ^3.2.4
-  three: ^0.152.2
+  three: ^0.155.0
   ts-node: ^10.9.1
   typescript: ^4.9.4
   vite: ^4.0.4
@@ -34,7 +34,7 @@ dependencies:
   lil-gui: 0.18.1
   sass: 1.62.1
   stats.js: 0.17.0
-  three: 0.152.2
+  three: 0.155.0
   vue: 3.2.45
   vue-router: 4.1.6_vue@3.2.45
 
@@ -46,7 +46,7 @@ devDependencies:
   '@types/node': 17.0.45
   '@types/stats.js': 0.17.0
   '@types/tailwindcss': 3.1.0_ts-node@10.9.1
-  '@types/three': 0.152.1
+  '@types/three': 0.155.0
   '@vitejs/plugin-vue': 4.0.0_vite@4.0.4+vue@3.2.45
   autoprefixer: 10.4.13
   prettier-plugin-tailwindcss: 0.1.13
@@ -434,14 +434,15 @@ packages:
       - ts-node
     dev: true
 
-  /@types/three/0.152.1:
-    resolution: {integrity: sha512-PMOCQnx9JRmq+2OUGTPoY9h1hTWD2L7/nmuW/SyNq1Vbq3Lwt3MNdl3wYSa4DvLTGv62NmIXD9jYdAOwohwJyw==}
+  /@types/three/0.155.0:
+    resolution: {integrity: sha512-IzdbqXsGsbG0flvq9D5L9pZRwySQQps2bGcizLYEsfvK3dM+B0sqKR6S+xAOXbouXemfDmHttrcQjVOM46YnAw==}
     dependencies:
       '@tweenjs/tween.js': 18.6.4
       '@types/stats.js': 0.17.0
       '@types/webxr': 0.5.2
       fflate: 0.6.10
       lil-gui: 0.17.0
+      meshoptimizer: 0.18.1
     dev: true
 
   /@types/webxr/0.5.2:
@@ -1081,6 +1082,10 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
+  /meshoptimizer/0.18.1:
+    resolution: {integrity: sha512-ZhoIoL7TNV4s5B6+rx5mC//fw8/POGyNxS/DZyCJeiZ12ScLfVwRE/GfsxwiTkMYYD5DmK2/JXnEVXqL4rF+Sw==}
+    dev: true
+
   /micromatch/4.0.5:
     resolution: {integrity: sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA==}
     engines: {node: '>=8.6'}
@@ -1449,8 +1454,8 @@ packages:
       - ts-node
     dev: true
 
-  /three/0.152.2:
-    resolution: {integrity: sha512-Ff9zIpSfkkqcBcpdiFo2f35vA9ZucO+N8TNacJOqaEE6DrB0eufItVMib8bK8Pcju/ZNT6a7blE1GhTpkdsILw==}
+  /three/0.155.0:
+    resolution: {integrity: sha512-sNgCYmDijnIqkD/bMfk+1pHg3YzsxW7V2ChpuP6HCQ8NiZr3RufsXQr8M3SSUMjW4hG+sUk7YbyuY0DncaDTJQ==}
     dev: false
 
   /to-fast-properties/2.0.0:

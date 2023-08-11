@@ -15,7 +15,7 @@
     "lil-gui": "^0.18.1",
     "sass": "^1.62.1",
     "stats.js": "^0.17.0",
-    "three": "^0.152.2",
+    "three": "^0.155.0",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
   },
@@ -27,7 +27,7 @@
     "@types/node": "^17.0.45",
     "@types/stats.js": "^0.17.0",
     "@types/tailwindcss": "^3.1.0",
-    "@types/three": "^0.152.1",
+    "@types/three": "^0.155.0",
     "@vitejs/plugin-vue": "^4.0.0",
     "autoprefixer": "^10.4.13",
     "prettier-plugin-tailwindcss": "^0.1.13",
